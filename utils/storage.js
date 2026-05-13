@@ -37,7 +37,35 @@
   function courseKey(url) {
     try {
       const u = new URL(url);
-      return `${u.hostname}${u.pathname}`.replace(/\/+$/, '');
+      const host = u.hostname.replace(/^www\./, '');
+      let path = u.pathname.replace(/\/+$/, '');
+
+      // YouTube playlist: key by list=<id> regardless of which video you're on
+      if (host.includes('youtube.com')) {
+        const list = u.searchParams.get('list');
+        if (list) return `youtube.com/playlist?list=${list}`;
+      }
+      // 100xDevs: /new-courses/<id>/video/<vid> -> /new-courses/<id>
+      if (host.includes('100xdevs.com')) {
+        path = path.replace(/\/video\/[^/]+.*$/, '');
+      }
+      // Udemy: /course/<slug>/learn/lecture/<id> -> /course/<slug>
+      if (host.includes('udemy.com')) {
+        path = path.replace(/\/learn\/(lecture|practice|quiz|video)\/.+$/, '');
+      }
+      // Coursera: trim specific lecture/quiz suffixes
+      if (host.includes('coursera.org')) {
+        path = path
+          .replace(/\/lecture\/[^/]+\/?[^/]*$/, '')
+          .replace(/\/quiz\/[^/]+\/?[^/]*$/, '')
+          .replace(/\/home$/, '');
+      }
+      // harkirat.classx.co.in: same pattern as 100xdevs
+      if (host.includes('classx.co.in')) {
+        path = path.replace(/\/video\/[^/]+.*$/, '');
+      }
+
+      return `${host}${path}`;
     } catch (_) {
       return url;
     }

@@ -72,7 +72,17 @@
       <span class="ct-check-box"></span>
     `;
     const input = box.querySelector('input');
-    input.addEventListener('click', (e) => e.stopPropagation());
+
+    // Block the parent row's click/navigation in capture phase, before the row
+    // (or React's delegated handler) ever sees the event.
+    const swallow = (e) => {
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+    };
+    ['pointerdown', 'mousedown', 'mouseup', 'click', 'touchstart', 'touchend'].forEach((ev) => {
+      box.addEventListener(ev, swallow, true);
+    });
+
     input.addEventListener('change', async (e) => {
       await CTStorage.setLectureState(currentUrl, item.id, {
         done: e.target.checked,
