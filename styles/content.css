@@ -1,0 +1,315 @@
+/* CourseTracker AI - Injected styles */
+
+:root[data-ct-theme="light"] {
+  --ct-bg: #ffffff;
+  --ct-surface: #f7f8fb;
+  --ct-text: #0f172a;
+  --ct-muted: #64748b;
+  --ct-border: #e2e8f0;
+  --ct-accent: #6366f1;
+  --ct-accent-2: #8b5cf6;
+  --ct-success: #10b981;
+  --ct-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+:root[data-ct-theme="dark"] {
+  --ct-bg: #0b1020;
+  --ct-surface: #111733;
+  --ct-text: #e2e8f0;
+  --ct-muted: #94a3b8;
+  --ct-border: #1f2a4a;
+  --ct-accent: #818cf8;
+  --ct-accent-2: #a78bfa;
+  --ct-success: #34d399;
+  --ct-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Checkbox injected next to each lecture */
+.ct-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.ct-check input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ct-check-box {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 2px solid var(--ct-accent, #6366f1);
+  background: transparent;
+  display: inline-block;
+  position: relative;
+  transition: all 0.18s ease;
+}
+
+.ct-check-box::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 0px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.18s ease;
+}
+
+.ct-check input:checked + .ct-check-box {
+  background: linear-gradient(135deg, var(--ct-accent, #6366f1), var(--ct-accent-2, #8b5cf6));
+  border-color: transparent;
+}
+
+.ct-check input:checked + .ct-check-box::after {
+  transform: rotate(45deg) scale(1);
+}
+
+.ct-tracked {
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.ct-done {
+  opacity: 0.65;
+}
+
+.ct-done .ct-check-box {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* Floating sidebar with progress */
+.ct-sidebar {
+  position: fixed;
+  top: 90px;
+  right: 18px;
+  width: 280px;
+  z-index: 2147483646;
+  background: var(--ct-bg, #fff);
+  color: var(--ct-text, #0f172a);
+  border: 1px solid var(--ct-border, #e2e8f0);
+  border-radius: 14px;
+  box-shadow: var(--ct-shadow);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  overflow: hidden;
+  animation: ctSlideIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes ctSlideIn {
+  from { transform: translateX(20px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+.ct-sidebar.ct-collapsed .ct-progress,
+.ct-sidebar.ct-collapsed .ct-sidebar-foot {
+  display: none;
+}
+
+.ct-sidebar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--ct-surface);
+  border-bottom: 1px solid var(--ct-border);
+}
+
+.ct-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.ct-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ct-accent), var(--ct-accent-2));
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+}
+
+.ct-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.ct-icon-btn {
+  border: none;
+  background: transparent;
+  color: var(--ct-muted);
+  font-size: 14px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.ct-icon-btn:hover {
+  background: var(--ct-border);
+  color: var(--ct-text);
+}
+
+#ct-stop:hover {
+  color: var(--ct-accent);
+}
+
+#ct-hide:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Stopped state */
+.ct-sidebar .ct-stopped-msg { display: none; }
+.ct-sidebar.ct-stopped .ct-progress { opacity: 0.45; filter: grayscale(0.6); }
+.ct-sidebar.ct-stopped .ct-stopped-msg {
+  display: block;
+  padding: 8px 14px 12px;
+  font-size: 12px;
+  color: var(--ct-muted);
+  font-style: italic;
+}
+
+/* Floating handle (shown when sidebar is hidden) */
+.ct-handle {
+  position: fixed;
+  bottom: 24px;
+  right: 18px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  z-index: 2147483646;
+  background: linear-gradient(135deg, var(--ct-accent, #6366f1), var(--ct-accent-2, #8b5cf6));
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: ctHandleIn 0.3s ease;
+}
+
+.ct-handle:hover {
+  transform: scale(1.08);
+  box-shadow: 0 10px 28px rgba(99, 102, 241, 0.55);
+}
+
+.ct-handle .ct-dot {
+  width: 14px;
+  height: 14px;
+  background: white;
+  box-shadow: none;
+}
+
+@keyframes ctHandleIn {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.ct-progress {
+  padding: 12px 14px 14px;
+}
+
+.ct-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.ct-progress-label {
+  color: var(--ct-muted);
+}
+
+.ct-progress-pct {
+  font-weight: 700;
+  font-size: 14px;
+  background: linear-gradient(135deg, var(--ct-accent), var(--ct-accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.ct-progress-track {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--ct-border);
+  overflow: hidden;
+}
+
+.ct-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--ct-accent), var(--ct-accent-2));
+  border-radius: 999px;
+  transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.ct-progress-fill.ct-pulse {
+  animation: ctPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes ctPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+  50%      { box-shadow: 0 0 0 8px rgba(99, 102, 241, 0); }
+}
+
+.ct-sidebar-foot {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--ct-border);
+  background: var(--ct-surface);
+}
+
+.ct-btn {
+  flex: 1;
+  border: none;
+  background: linear-gradient(135deg, var(--ct-accent), var(--ct-accent-2));
+  color: white;
+  padding: 7px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+  transition: transform 0.12s ease, box-shadow 0.18s ease;
+}
+
+.ct-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.25);
+}
+
+.ct-btn-ghost {
+  background: transparent;
+  color: var(--ct-text);
+  border: 1px solid var(--ct-border);
+}
+
+.ct-btn-ghost:hover {
+  background: var(--ct-border);
+  box-shadow: none;
+}
+
+@media (max-width: 720px) {
+  .ct-sidebar {
+    width: 220px;
+    right: 8px;
+    top: 70px;
+  }
+}

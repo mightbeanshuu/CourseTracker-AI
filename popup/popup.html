@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CourseTracker AI</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="wrap" id="wrap">
+    <header class="head">
+      <div class="brand">
+        <span class="dot"></span>
+        <h1>CourseTracker AI</h1>
+      </div>
+      <button id="themeBtn" class="icon-btn" title="Toggle theme">◐</button>
+    </header>
+
+    <section class="card">
+      <div class="row between">
+        <div>
+          <div class="muted small">Current course</div>
+          <div id="courseUrl" class="title">—</div>
+        </div>
+        <div class="pill" id="platformPill">—</div>
+      </div>
+
+      <div class="progress-block">
+        <div class="row between small">
+          <span id="progressLabel" class="muted">Progress: 0 / 0</span>
+          <span id="progressPct" class="grad-text">0%</span>
+        </div>
+        <div class="track"><div id="progressFill" class="fill"></div></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="row between">
+        <label class="switch">
+          <input type="checkbox" id="enabledToggle" />
+          <span>Enable tracker</span>
+        </label>
+        <label class="switch">
+          <input type="checkbox" id="hiddenToggle" />
+          <span>Hide sidebar</span>
+        </label>
+      </div>
+      <div class="row gap">
+        <button id="stopBtn" class="btn ghost">Stop</button>
+        <button id="hideBtn" class="btn ghost">Hide</button>
+        <button id="rescanBtn" class="btn">Rescan</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="row between">
+        <strong class="small">Lectures</strong>
+        <span id="lectureCount" class="muted small">0</span>
+      </div>
+      <ul id="lectureList" class="list"></ul>
+    </section>
+
+    <section class="card">
+      <div class="row gap">
+        <button id="exportBtn" class="btn ghost">Export JSON</button>
+        <button id="importBtn" class="btn ghost">Import JSON</button>
+        <input id="importFile" type="file" accept="application/json" hidden />
+      </div>
+      <button id="resetBtn" class="btn danger">Reset this course</button>
+    </section>
+
+    <footer class="foot muted small">
+      v1.0.0 · Track smarter, learn faster
+    </footer>
+  </div>
+
+  <script src="../utils/storage.js"></script>
+  <script src="../utils/progress.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
