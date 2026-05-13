@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "CourseTracker AI",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Automatically detects online course websites and adds a progress tracking checklist beside each lecture.",
   "permissions": ["storage", "activeTab", "scripting"],
   "host_permissions": [

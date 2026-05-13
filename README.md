@@ -40,6 +40,7 @@ Open a course page → checkboxes appear → tick what you've watched → progre
 | 🎯 **Auto detect** | Works on Udemy, Coursera, YouTube playlists, 100xDevs, and any generic course-style site |
 | ✅ **Inline checkboxes** | Tick lectures right where they live in the page |
 | 📊 **Live progress bar** | Floating sidebar shows completion in real time |
+| ⏱️ **Total playlist duration** | See watched / remaining / total time at a glance |
 | 💾 **Persistent state** | `chrome.storage.local` keeps your progress across sessions |
 | 🌗 **Dark / Light / Auto** | Adapts to your system theme automatically |
 | ⏸️ **Stop / ▶️ Resume** | One click to pause tracking on any page |

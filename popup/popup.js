@@ -43,6 +43,16 @@ async function refresh() {
   $('#progressFill').style.width = `${stats.pct}%`;
   $('#lectureCount').textContent = stats.total;
 
+  const durRow = $('#durationRow');
+  if (stats.hasDuration && stats.totalDuration > 0) {
+    durRow.hidden = false;
+    $('#durWatched').textContent = CTProgress.formatDuration(stats.completedDuration);
+    $('#durRemaining').textContent = CTProgress.formatDuration(stats.remainingDuration);
+    $('#durTotal').textContent = CTProgress.formatDuration(stats.totalDuration);
+  } else {
+    durRow.hidden = true;
+  }
+
   const settings = await CTStorage.getSettings();
   $('#enabledToggle').checked = !!settings.enabled;
   $('#hiddenToggle').checked = !!settings.hidden;
@@ -63,9 +73,11 @@ async function refresh() {
   for (const [id, lec] of entries) {
     const li = document.createElement('li');
     li.className = lec.done ? 'done' : '';
+    const durLabel = lec.duration ? `<span class="lec-dur">${escapeHtml(lec.duration)}</span>` : '';
     li.innerHTML = `
       <input type="checkbox" ${lec.done ? 'checked' : ''} />
       <span class="lec-title" title="${escapeHtml(lec.title)}">${escapeHtml(lec.title)}</span>
+      ${durLabel}
     `;
     li.querySelector('input').addEventListener('change', async (e) => {
       await CTStorage.setLectureState(url, id, { ...lec, done: e.target.checked });

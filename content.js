@@ -119,6 +119,13 @@
           <span class="ct-progress-pct">0%</span>
         </div>
         <div class="ct-progress-track"><div class="ct-progress-fill" style="width:0%"></div></div>
+        <div class="ct-duration" hidden>
+          <span class="ct-dur-icon">⏱</span>
+          <span class="ct-dur-watched">0m</span>
+          <span class="ct-dur-sep">/</span>
+          <span class="ct-dur-total">0m</span>
+          <span class="ct-dur-remaining"></span>
+        </div>
       </div>
       <div class="ct-stopped-msg">Tracking paused. Click ▶ to resume.</div>
       <div class="ct-sidebar-foot">
@@ -211,6 +218,21 @@
     const fill = bar.querySelector('.ct-progress-fill');
     fill.style.width = `${stats.pct}%`;
     fill.classList.toggle('ct-pulse', stats.pct === 100);
+
+    const dur = bar.querySelector('.ct-duration');
+    if (stats.hasDuration && stats.totalDuration > 0) {
+      dur.hidden = false;
+      dur.querySelector('.ct-dur-watched').textContent =
+        CTProgress.formatDuration(stats.completedDuration);
+      dur.querySelector('.ct-dur-total').textContent =
+        CTProgress.formatDuration(stats.totalDuration);
+      const remEl = dur.querySelector('.ct-dur-remaining');
+      remEl.textContent = stats.remainingDuration > 0
+        ? `· ${CTProgress.formatDuration(stats.remainingDuration)} left`
+        : '· done!';
+    } else {
+      dur.hidden = true;
+    }
   }
 
   async function runScan(force = false) {
