@@ -13,9 +13,19 @@ chrome.runtime.onInstalled.addListener(({ reason }) => {
   }
 });
 
+function safeSend(tabId, payload) {
+  try {
+    const p = chrome.tabs.sendMessage(tabId, payload);
+    if (p && typeof p.catch === 'function') p.catch(() => {});
+  } catch (_) { /* tab gone or no listener */ }
+}
+
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg?.type === 'CT_OPEN_POPUP') {
-    chrome.action.openPopup?.().catch(() => {});
+    try {
+      const p = chrome.action.openPopup?.();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    } catch (_) {}
     sendResponse({ ok: true });
     return true;
   }
@@ -30,7 +40,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg?.type === 'CT_BROADCAST_UPDATE') {
     chrome.tabs.query({}, (tabs) => {
       for (const t of tabs) {
-        if (t.id) chrome.tabs.sendMessage(t.id, { type: 'CT_REFRESH' }).catch(() => {});
+        if (t.id) safeSend(t.id, { type: 'CT_REFRESH' });
       }
     });
     sendResponse({ ok: true });
@@ -39,7 +49,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 });
 
 chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
-  if (info.status === 'complete' && tab.url) {
-    chrome.tabs.sendMessage(tabId, { type: 'CT_URL_CHANGED', url: tab.url }).catch(() => {});
+  if (info.status === 'complete' && tab.url && /^https?:/.test(tab.url)) {
+    safeSend(tabId, { type: 'CT_URL_CHANGED', url: tab.url });
   }
 });

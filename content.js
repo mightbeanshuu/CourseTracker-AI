@@ -325,8 +325,10 @@
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', () => {
+      init().catch(() => teardown());
+    });
   } else {
-    init();
+    init().catch(() => teardown());
   }
 })();
