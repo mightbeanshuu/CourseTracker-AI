@@ -344,6 +344,143 @@ h1:focus {
   color: var(--muted);
 }
 
+/* Inline mini-player */
+.player {
+  position: sticky;
+  top: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 18px;
+  z-index: 50;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+  transition: all 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.player[hidden] { display: none !important; }
+
+.player-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.player-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.22);
+  animation: ctPlayPulse 1.6s ease-in-out infinite;
+  flex: 0 0 auto;
+}
+
+@keyframes ctPlayPulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
+
+.player-label { letter-spacing: 0.4px; text-transform: uppercase; font-size: 10px; }
+
+.player-title {
+  flex: 1;
+  font-weight: 700;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-actions { display: flex; gap: 4px; }
+
+.player-icon-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--muted);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.player-icon-btn:hover { background: var(--border); color: var(--text); }
+.player-icon-btn.close:hover { background: rgba(239, 68, 68, 0.12); color: var(--danger); }
+
+.player-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+
+.player-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.player-fallback {
+  padding: 36px 24px;
+  text-align: center;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.player-fallback h3 { margin: 4px 0 0; color: var(--text); font-size: 15px; }
+.player-fallback p { margin: 0 0 6px; max-width: 380px; }
+.player-fallback .btn { text-decoration: none; display: inline-block; }
+
+/* Minimized — sticky floating mini in bottom-right */
+.player.minimized {
+  position: fixed;
+  top: auto;
+  bottom: 20px;
+  right: 20px;
+  left: auto;
+  width: 340px;
+  margin: 0;
+  z-index: 1000;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  animation: ctPlayerMinIn 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: pointer;
+}
+
+.player.minimized .player-head { cursor: pointer; }
+.player.minimized .player-label { display: none; }
+.player.minimized .player-frame { cursor: default; }
+
+@keyframes ctPlayerMinIn {
+  from { transform: translateY(24px) scale(0.92); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Now-playing row highlight */
+.item.playing {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.22);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.06), rgba(139, 92, 246, 0.06));
+}
+
+.item-btn.play {
+  color: var(--accent);
+}
+
+.item-btn.play:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.12));
+  color: var(--accent);
+}
+
 .empty-icon { font-size: 48px; margin-bottom: 8px; }
 .empty h3 { margin: 8px 0 4px; color: var(--text); }
 .empty p { margin: 0; font-size: 13px; max-width: 360px; margin: 0 auto; }

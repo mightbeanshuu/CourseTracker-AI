@@ -49,6 +49,7 @@ Open a course page → checkboxes appear → tick what you've watched → progre
 | 🖐️ **Draggable sidebar** | Grab the header to move the tracker anywhere; double-click the brand to reset |
 | ✨ **AI Playlist Builder** | Describe what you want ("all backend videos") and Groq picks the right lectures |
 | 📂 **Custom playlists** | Cherry-pick lectures into named playlists that open in a dedicated tab |
+| ▶️ **Inline mini-player** | Play YouTube / Vimeo videos right inside the playlist tab — minimize to a floating bottom-right window or close anytime |
 | 📤 **Export / Import** | Backup your progress as JSON |
 | ⚡ **Zero build** | Pure vanilla JS — no bundler, no dependencies |
 

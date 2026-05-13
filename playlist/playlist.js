@@ -15,6 +15,102 @@ function hostOf(url) {
   catch (_) { return ''; }
 }
 
+function getEmbedUrl(url) {
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace(/^www\./, '');
+
+    if (host === 'youtube.com' || host === 'm.youtube.com') {
+      const vid = u.searchParams.get('v');
+      if (vid) {
+        let embed = `https://www.youtube.com/embed/${vid}?autoplay=1&rel=0&modestbranding=1`;
+        const list = u.searchParams.get('list');
+        if (list) embed += `&list=${list}`;
+        const t = u.searchParams.get('t') || u.searchParams.get('start');
+        if (t) embed += `&start=${parseInt(t, 10) || 0}`;
+        return { url: embed, embeddable: true };
+      }
+      if (u.pathname.startsWith('/embed/')) {
+        return { url: u.href, embeddable: true };
+      }
+    }
+    if (host === 'youtu.be') {
+      const vid = u.pathname.slice(1).split('/')[0];
+      if (vid) return {
+        url: `https://www.youtube.com/embed/${vid}?autoplay=1&rel=0&modestbranding=1`,
+        embeddable: true
+      };
+    }
+    if (host === 'vimeo.com' || host === 'player.vimeo.com') {
+      const seg = u.pathname.split('/').filter(Boolean);
+      const id = seg.find((p) => /^\d+$/.test(p));
+      if (id) return { url: `https://player.vimeo.com/video/${id}?autoplay=1`, embeddable: true };
+    }
+
+    return { url, embeddable: false };
+  } catch (_) {
+    return { url, embeddable: false };
+  }
+}
+
+let currentItem = null;
+
+function playItem(item) {
+  currentItem = item;
+  const { url: embedUrl, embeddable } = getEmbedUrl(item.url);
+  const container = $('#playerContainer');
+  const iframe = $('#playerIframe');
+  const fallback = $('#playerFallback');
+  const frameWrap = iframe.parentElement;
+
+  $('#playerTitle').textContent = item.title;
+
+  if (embeddable) {
+    fallback.hidden = true;
+    frameWrap.style.display = '';
+    if (iframe.src !== embedUrl) iframe.src = embedUrl;
+  } else {
+    iframe.src = 'about:blank';
+    frameWrap.style.display = 'none';
+    fallback.hidden = false;
+    $('#playerOpenExt').href = item.url;
+  }
+
+  container.hidden = false;
+  container.classList.remove('minimized');
+
+  document.querySelectorAll('.item.playing').forEach((el) => el.classList.remove('playing'));
+  const li = document.querySelector(`[data-item-id="${CSS.escape(item.id)}"]`);
+  if (li) li.classList.add('playing');
+
+  container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function minimizePlayer() {
+  $('#playerContainer').classList.add('minimized');
+  $('#playerMinBtn').textContent = '▢';
+  $('#playerMinBtn').title = 'Restore';
+}
+
+function restorePlayer() {
+  const container = $('#playerContainer');
+  container.classList.remove('minimized');
+  $('#playerMinBtn').textContent = '—';
+  $('#playerMinBtn').title = 'Minimize';
+  container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closePlayer() {
+  const iframe = $('#playerIframe');
+  iframe.src = 'about:blank';
+  $('#playerContainer').hidden = true;
+  $('#playerContainer').classList.remove('minimized');
+  $('#playerMinBtn').textContent = '—';
+  $('#playerMinBtn').title = 'Minimize';
+  document.querySelectorAll('.item.playing').forEach((el) => el.classList.remove('playing'));
+  currentItem = null;
+}
+
 async function applyTheme() {
   const settings = await CTStorage.getSettings();
   let theme = settings.theme;
@@ -94,8 +190,10 @@ async function render() {
 
   pl.items.forEach((it, i) => {
     const done = doneMap[it.id];
+    const playing = currentItem && currentItem.id === it.id;
     const li = document.createElement('li');
-    li.className = `item${done ? ' done' : ''}`;
+    li.dataset.itemId = it.id;
+    li.className = `item${done ? ' done' : ''}${playing ? ' playing' : ''}`;
     li.innerHTML = `
       <span class="item-index">${i + 1}</span>
       <input type="checkbox" class="item-check" ${done ? 'checked' : ''} />
@@ -107,6 +205,7 @@ async function render() {
         </div>
       </div>
       <div class="item-actions">
+        <button class="item-btn play" title="Play here">▶</button>
         <button class="item-btn open" title="Open in new tab">↗</button>
         <button class="item-btn remove" title="Remove from playlist">🗑</button>
       </div>
@@ -117,9 +216,13 @@ async function render() {
       catch (_) { window.open(it.url, '_blank'); }
     };
 
-    li.querySelector('.item-main').addEventListener('click', goTo);
+    li.querySelector('.item-main').addEventListener('click', () => playItem(it));
     li.querySelector('.item-main').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') goTo();
+      if (e.key === 'Enter') playItem(it);
+    });
+    li.querySelector('.play').addEventListener('click', (e) => {
+      e.stopPropagation();
+      playItem(it);
     });
     li.querySelector('.open').addEventListener('click', (e) => {
       e.stopPropagation();
@@ -203,5 +306,29 @@ document.addEventListener('DOMContentLoaded', async () => {
   chrome.storage?.onChanged?.addListener((changes, area) => {
     if (area !== 'local') return;
     if (changes.ct_playlists || changes.ct_courses) render();
+  });
+
+  // Player controls
+  $('#playerMinBtn').addEventListener('click', () => {
+    const isMinimized = $('#playerContainer').classList.contains('minimized');
+    isMinimized ? restorePlayer() : minimizePlayer();
+  });
+  $('#playerCloseBtn').addEventListener('click', closePlayer);
+
+  // Clicking anywhere on the minimized player's title bar (except buttons) restores
+  $('#playerHead').addEventListener('click', (e) => {
+    if (e.target.closest('button')) return;
+    if ($('#playerContainer').classList.contains('minimized')) restorePlayer();
+  });
+
+  // Keyboard shortcuts: Esc closes, M toggles minimize
+  document.addEventListener('keydown', (e) => {
+    if (!currentItem) return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return;
+    if (e.key === 'Escape') closePlayer();
+    else if (e.key === 'm' || e.key === 'M') {
+      const isMin = $('#playerContainer').classList.contains('minimized');
+      isMin ? restorePlayer() : minimizePlayer();
+    }
   });
 });
