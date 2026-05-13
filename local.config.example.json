@@ -1,0 +1,5 @@
+{
+  "_comment": "Copy this file to local.config.json and fill in your key. local.config.json is gitignored and will never be pushed.",
+  "aiKey": "",
+  "aiModel": "llama-3.3-70b-versatile"
+}

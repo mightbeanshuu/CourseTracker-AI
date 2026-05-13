@@ -5,3 +5,9 @@ dist/
 *.zip
 .vscode/
 .idea/
+
+# Local secrets — never push these
+local.config.json
+.env
+.env.*
+!.env.example

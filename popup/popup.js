@@ -324,6 +324,26 @@ async function loadAISettings() {
   $('#aiModelInput').value = s.aiModel || 'llama-3.3-70b-versatile';
 }
 
+// Auto-hydrate the API key from a gitignored local.config.json on the user's
+// machine. Once stored, chrome.storage.local is the source of truth and this
+// file is no longer needed.
+async function hydrateFromLocalConfig() {
+  try {
+    const settings = await CTStorage.getSettings();
+    if (settings.aiKey) return;
+    const url = chrome.runtime.getURL('local.config.json');
+    const res = await fetch(url);
+    if (!res.ok) return;
+    const cfg = await res.json();
+    if (cfg && typeof cfg.aiKey === 'string' && cfg.aiKey.trim()) {
+      await CTStorage.setSettings({
+        aiKey: cfg.aiKey.trim(),
+        aiModel: cfg.aiModel || settings.aiModel
+      });
+    }
+  } catch (_) { /* missing or malformed — fine */ }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   await applyTheme();
   await refresh();
@@ -354,6 +374,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // AI Builder
+  await hydrateFromLocalConfig();
   await loadAISettings();
   $('#aiGenerateBtn').addEventListener('click', generateAIPlaylist);
   $('#aiPrompt').addEventListener('keydown', (e) => {
