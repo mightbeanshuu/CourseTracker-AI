@@ -46,6 +46,8 @@ Open a course page → checkboxes appear → tick what you've watched → progre
 | ⏸️ **Stop / ▶️ Resume** | One click to pause tracking on any page |
 | 🙈 **Hide / 🙉 Show** | Collapse to a floating handle when you don't need it |
 | 🔄 **SPA-aware** | MutationObserver + URL polling keeps up with React / lazy-load |
+| 🖐️ **Draggable sidebar** | Grab the header to move the tracker anywhere; double-click the brand to reset |
+| ✨ **AI Playlist Builder** | Describe what you want ("all backend videos") and Groq picks the right lectures |
 | 📂 **Custom playlists** | Cherry-pick lectures into named playlists that open in a dedicated tab |
 | 📤 **Export / Import** | Backup your progress as JSON |
 | ⚡ **Zero build** | Pure vanilla JS — no bundler, no dependencies |

@@ -217,9 +217,13 @@
     const defaults = {
       theme: 'auto',
       sidebarPosition: 'right',
+      sidebarLeft: null,
+      sidebarTop: null,
       enabled: true,
       hidden: false,
-      animations: true
+      animations: true,
+      aiKey: '',
+      aiModel: 'llama-3.3-70b-versatile'
     };
     return { ...defaults, ...(res[SETTINGS_KEY] || {}) };
   }

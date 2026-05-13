@@ -148,6 +148,10 @@
     el.querySelector('#ct-collapse').addEventListener('click', () => {
       el.classList.toggle('ct-collapsed');
     });
+
+    // Make the sidebar draggable by its header
+    enableDrag(el, el.querySelector('.ct-sidebar-head'));
+    applySavedPosition(el);
     el.querySelector('#ct-hide').addEventListener('click', async () => {
       await CTStorage.setSettings({ hidden: true });
       applyVisibility();
@@ -167,6 +171,93 @@
       await applyTheme();
     });
     return el;
+  }
+
+  async function applySavedPosition(el) {
+    const s = await CTStorage.getSettings();
+    if (s.sidebarLeft != null && s.sidebarTop != null) {
+      const left = Math.max(0, Math.min(window.innerWidth - 60, s.sidebarLeft));
+      const top = Math.max(0, Math.min(window.innerHeight - 60, s.sidebarTop));
+      el.style.left = left + 'px';
+      el.style.top = top + 'px';
+      el.style.right = 'auto';
+    }
+  }
+
+  function enableDrag(el, handle) {
+    if (!handle || handle.dataset.ctDrag === '1') return;
+    handle.dataset.ctDrag = '1';
+    handle.style.cursor = 'move';
+
+    let startX = 0, startY = 0;
+    let originLeft = 0, originTop = 0;
+    let dragging = false;
+    let moved = false;
+
+    const onDown = (e) => {
+      if (e.target.closest('button, input, label, a')) return;
+      dragging = true;
+      moved = false;
+      const rect = el.getBoundingClientRect();
+      originLeft = rect.left;
+      originTop = rect.top;
+      startX = (e.touches ? e.touches[0].clientX : e.clientX);
+      startY = (e.touches ? e.touches[0].clientY : e.clientY);
+      el.style.transition = 'none';
+      el.classList.add('ct-dragging');
+      document.addEventListener('mousemove', onMove, true);
+      document.addEventListener('mouseup', onUp, true);
+      document.addEventListener('touchmove', onMove, { passive: false, capture: true });
+      document.addEventListener('touchend', onUp, true);
+      e.preventDefault();
+    };
+
+    const onMove = (e) => {
+      if (!dragging) return;
+      const cx = e.touches ? e.touches[0].clientX : e.clientX;
+      const cy = e.touches ? e.touches[0].clientY : e.clientY;
+      const dx = cx - startX;
+      const dy = cy - startY;
+      if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
+      const left = Math.max(0, Math.min(window.innerWidth - el.offsetWidth, originLeft + dx));
+      const top = Math.max(0, Math.min(window.innerHeight - el.offsetHeight, originTop + dy));
+      el.style.left = left + 'px';
+      el.style.top = top + 'px';
+      el.style.right = 'auto';
+      if (e.cancelable) e.preventDefault();
+    };
+
+    const onUp = async () => {
+      if (!dragging) return;
+      dragging = false;
+      el.style.transition = '';
+      el.classList.remove('ct-dragging');
+      document.removeEventListener('mousemove', onMove, true);
+      document.removeEventListener('mouseup', onUp, true);
+      document.removeEventListener('touchmove', onMove, true);
+      document.removeEventListener('touchend', onUp, true);
+      if (moved) {
+        const rect = el.getBoundingClientRect();
+        await CTStorage.setSettings({
+          sidebarLeft: Math.round(rect.left),
+          sidebarTop: Math.round(rect.top)
+        });
+      }
+    };
+
+    handle.addEventListener('mousedown', onDown);
+    handle.addEventListener('touchstart', onDown, { passive: false });
+
+    // Double-click the brand to reset to default position
+    const brand = handle.querySelector('.ct-brand');
+    if (brand) {
+      brand.addEventListener('dblclick', async () => {
+        el.style.left = '';
+        el.style.top = '';
+        el.style.right = '';
+        await CTStorage.setSettings({ sidebarLeft: null, sidebarTop: null });
+      });
+    }
   }
 
   function ensureHandle() {

@@ -203,6 +203,127 @@ function closeAddToPlaylist() {
   $('#addToPlaylistPanel').hidden = true;
 }
 
+// --- AI Playlist Builder ---
+
+function setStatus(text, kind = '') {
+  const el = $('#aiStatus');
+  el.textContent = text;
+  el.className = 'muted small' + (kind ? ' ' + kind : '');
+}
+
+async function generateAIPlaylist() {
+  const promptText = $('#aiPrompt').value.trim();
+  if (!promptText) {
+    setStatus('Describe what to include first.', 'err');
+    return;
+  }
+  const settings = await CTStorage.getSettings();
+  if (!settings.aiKey) {
+    setStatus('Set your Groq API key in ⚙ settings first.', 'err');
+    $('#aiSettingsPanel').hidden = false;
+    return;
+  }
+
+  const tab = await getActiveTab();
+  if (!tab?.url) { setStatus('No active tab.', 'err'); return; }
+
+  const course = await CTStorage.getCourse(tab.url);
+  const lectureEntries = Object.entries(course.lectures || {});
+  if (!lectureEntries.length) {
+    setStatus('No lectures detected. Run Rescan first.', 'err');
+    return;
+  }
+
+  const lectures = lectureEntries.map(([id, lec]) => ({
+    id,
+    title: lec.title,
+    duration: lec.duration || ''
+  }));
+
+  setStatus('Thinking…', 'busy');
+  $('#aiGenerateBtn').disabled = true;
+
+  try {
+    const systemPrompt =
+      'You build curated playlists from a course\'s lecture list. ' +
+      'Reply with JSON ONLY in this shape: ' +
+      '{"playlistName":"<short name, max 60 chars>","lectureIds":["id1","id2"]}. ' +
+      'Rules: only use ids that appear in the provided list; keep the original ' +
+      'order unless the user asks otherwise; if the user requests specific ' +
+      'titles, match them case-insensitively; if nothing matches, return an ' +
+      'empty array and name "No matches".';
+
+    const userMsg = `Available lectures (JSON):\n${JSON.stringify(lectures)}\n\nUser request: ${promptText}`;
+
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${settings.aiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: settings.aiModel || 'llama-3.3-70b-versatile',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userMsg }
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.2,
+        max_tokens: 2000
+      })
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Groq ${res.status}: ${text.slice(0, 160)}`);
+    }
+    const data = await res.json();
+    const content = data.choices?.[0]?.message?.content;
+    if (!content) throw new Error('Empty response from AI.');
+
+    let parsed;
+    try { parsed = JSON.parse(content); }
+    catch (_) { throw new Error('AI did not return valid JSON.'); }
+
+    const validIds = (parsed.lectureIds || []).filter((id) => course.lectures[id]);
+    if (!validIds.length) {
+      setStatus('AI found no matching lectures.', 'err');
+      return;
+    }
+
+    const name = (parsed.playlistName && parsed.playlistName.trim()) ||
+      `AI · ${promptText.slice(0, 40)}`;
+    const playlist = await CTStorage.createPlaylist(name);
+    const ck = CTStorage.courseKey(tab.url);
+
+    for (const id of validIds) {
+      const lec = course.lectures[id];
+      await CTStorage.addItemToPlaylist(playlist.id, {
+        url: lec.url || tab.url,
+        title: lec.title,
+        duration: lec.duration || null,
+        courseKey: ck,
+        lectureId: id
+      });
+    }
+
+    setStatus(`Created "${name}" with ${validIds.length} videos`, 'ok');
+    $('#aiPrompt').value = '';
+    await renderPlaylists();
+    openPlaylist(playlist.id);
+  } catch (err) {
+    setStatus(err.message || 'AI request failed.', 'err');
+  } finally {
+    $('#aiGenerateBtn').disabled = false;
+  }
+}
+
+async function loadAISettings() {
+  const s = await CTStorage.getSettings();
+  $('#aiKeyInput').value = s.aiKey || '';
+  $('#aiModelInput').value = s.aiModel || 'llama-3.3-70b-versatile';
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   await applyTheme();
   await refresh();
@@ -230,6 +351,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   $('#addPanelNewName').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') $('#addPanelCreate').click();
+  });
+
+  // AI Builder
+  await loadAISettings();
+  $('#aiGenerateBtn').addEventListener('click', generateAIPlaylist);
+  $('#aiPrompt').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) generateAIPlaylist();
+  });
+  $('#aiSettingsBtn').addEventListener('click', () => {
+    $('#aiSettingsPanel').hidden = !$('#aiSettingsPanel').hidden;
+  });
+  $('#aiKeySave').addEventListener('click', async () => {
+    const key = $('#aiKeyInput').value.trim();
+    const model = $('#aiModelInput').value;
+    await CTStorage.setSettings({ aiKey: key, aiModel: model });
+    setStatus(key ? 'Key saved.' : 'Key cleared.', 'ok');
+  });
+  $('#aiKeyClear').addEventListener('click', async () => {
+    await CTStorage.setSettings({ aiKey: '' });
+    $('#aiKeyInput').value = '';
+    setStatus('Key cleared.', 'ok');
   });
 
   $('#themeBtn').addEventListener('click', async () => {

@@ -111,9 +111,19 @@
 }
 
 .ct-sidebar.ct-collapsed .ct-progress,
+.ct-sidebar.ct-collapsed .ct-stopped-msg,
 .ct-sidebar.ct-collapsed .ct-sidebar-foot {
   display: none;
 }
+
+.ct-sidebar.ct-dragging {
+  cursor: grabbing !important;
+  box-shadow: 0 16px 40px rgba(99, 102, 241, 0.35);
+  transform: scale(1.02);
+  user-select: none;
+}
+
+.ct-sidebar.ct-dragging * { user-select: none !important; pointer-events: none; }
 
 .ct-sidebar-head {
   display: flex;

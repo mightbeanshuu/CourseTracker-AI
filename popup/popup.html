@@ -69,6 +69,38 @@
 
     <section class="card">
       <div class="row between">
+        <strong class="small">✨ AI Playlist Builder</strong>
+        <button id="aiSettingsBtn" class="icon-btn" title="API key settings">⚙</button>
+      </div>
+      <textarea id="aiPrompt" class="input" rows="2"
+        placeholder="e.g. all backend videos, beginner Python lessons, or 'add: intro, setup, routing'"></textarea>
+      <div class="row gap">
+        <button id="aiGenerateBtn" class="btn">Generate playlist</button>
+        <span id="aiStatus" class="muted small"></span>
+      </div>
+      <div id="aiSettingsPanel" class="ai-settings" hidden>
+        <label class="muted small">Groq API key (stored locally only)</label>
+        <input id="aiKeyInput" class="input" type="password" placeholder="gsk_…" autocomplete="off" />
+        <label class="muted small">Model</label>
+        <select id="aiModelInput" class="input">
+          <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (default)</option>
+          <option value="llama-3.1-8b-instant">llama-3.1-8b-instant (faster)</option>
+          <option value="mixtral-8x7b-32768">mixtral-8x7b-32768</option>
+          <option value="gemma2-9b-it">gemma2-9b-it</option>
+        </select>
+        <div class="row gap">
+          <button id="aiKeySave" class="btn">Save</button>
+          <button id="aiKeyClear" class="btn ghost">Clear</button>
+        </div>
+        <p class="muted small" style="margin: 4px 0 0">
+          Get a free key at <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a>.
+          The key never leaves your browser.
+        </p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="row between">
         <strong class="small">📂 My Playlists</strong>
         <button id="newPlaylistBtn" class="btn">+ New</button>
       </div>

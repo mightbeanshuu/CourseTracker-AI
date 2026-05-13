@@ -330,6 +330,32 @@ html, body {
   color: var(--text);
 }
 
+.ai-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--bg);
+  border: 1px dashed var(--border);
+}
+
+.ai-settings[hidden] { display: none !important; }
+.ai-settings a { color: var(--accent); text-decoration: none; }
+.ai-settings a:hover { text-decoration: underline; }
+
+textarea.input {
+  resize: vertical;
+  min-height: 44px;
+  font-family: inherit;
+}
+
+select.input { cursor: pointer; }
+
+#aiStatus.ok { color: var(--success, #10b981); }
+#aiStatus.err { color: var(--danger, #ef4444); }
+#aiStatus.busy { color: var(--accent); }
+
 .modal {
   position: fixed;
   inset: 0;
