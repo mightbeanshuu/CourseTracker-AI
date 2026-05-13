@@ -46,6 +46,7 @@ Open a course page → checkboxes appear → tick what you've watched → progre
 | ⏸️ **Stop / ▶️ Resume** | One click to pause tracking on any page |
 | 🙈 **Hide / 🙉 Show** | Collapse to a floating handle when you don't need it |
 | 🔄 **SPA-aware** | MutationObserver + URL polling keeps up with React / lazy-load |
+| 📂 **Custom playlists** | Cherry-pick lectures into named playlists that open in a dedicated tab |
 | 📤 **Export / Import** | Backup your progress as JSON |
 | ⚡ **Zero build** | Pure vanilla JS — no bundler, no dependencies |
 

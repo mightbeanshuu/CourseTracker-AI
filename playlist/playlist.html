@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CourseTracker AI · Playlist</title>
+  <link rel="icon" href="../assets/icon48.png" />
+  <link rel="stylesheet" href="playlist.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="page-head">
+      <div class="brand-row">
+        <div class="brand">
+          <span class="dot"></span>
+          <strong>CourseTracker AI</strong>
+        </div>
+        <button id="themeBtn" class="icon-btn" title="Toggle theme">◐</button>
+      </div>
+      <div class="title-row">
+        <h1 id="playlistName" contenteditable="true" spellcheck="false">Playlist</h1>
+        <span id="itemCount" class="pill">0</span>
+      </div>
+      <div class="meta-row">
+        <span id="meta" class="muted small">—</span>
+      </div>
+
+      <div class="progress-block card">
+        <div class="row between small">
+          <span id="progressLabel" class="muted">Progress: 0 / 0</span>
+          <span id="progressPct" class="grad-text">0%</span>
+        </div>
+        <div class="track"><div id="progressFill" class="fill"></div></div>
+        <div id="durationRow" class="duration" hidden>
+          <span class="dur-icon">⏱</span>
+          <span><strong id="durWatched">0m</strong> watched</span>
+          <span class="dur-sep">·</span>
+          <span><strong id="durRemaining">0m</strong> left</span>
+          <span class="dur-sep">·</span>
+          <span>of <strong id="durTotal">0m</strong></span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <ul id="itemsList" class="items"></ul>
+      <div id="emptyState" class="empty" hidden>
+        <div class="empty-icon">📂</div>
+        <h3>This playlist is empty</h3>
+        <p>Open any supported course page, click the toolbar icon, and tap <strong>⊕</strong> next to a lecture to add it here.</p>
+      </div>
+    </main>
+
+    <footer class="page-foot">
+      <button id="exportBtn" class="btn ghost">Export JSON</button>
+      <button id="deleteBtn" class="btn danger">Delete playlist</button>
+    </footer>
+  </div>
+
+  <script src="../utils/storage.js"></script>
+  <script src="../utils/progress.js"></script>
+  <script src="playlist.js"></script>
+</body>
+</html>

@@ -253,6 +253,114 @@ html, body {
   border: 1px solid var(--border);
 }
 
+.list .add-pl-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  color: var(--accent);
+  transition: background 0.15s ease, transform 0.12s ease;
+  padding: 0;
+}
+
+.list .add-pl-btn:hover {
+  background: var(--surface);
+  transform: scale(1.1);
+}
+
+.input {
+  flex: 1;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.input:focus { border-color: var(--accent); }
+
+.pl-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.pl-row .pl-name {
+  flex: 1;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pl-row .pl-count {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: white;
+  font-weight: 700;
+}
+
+.pl-row .pl-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.pl-row .pl-icon-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.pl-row .pl-icon-btn:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  animation: ctFadeIn 0.18s ease;
+}
+
+.modal[hidden] { display: none !important; }
+
+.modal-inner {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 320px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  animation: ctScaleIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes ctFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ctScaleIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
 .foot {
   text-align: center;
   padding-top: 4px;

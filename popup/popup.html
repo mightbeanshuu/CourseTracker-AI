@@ -68,6 +68,29 @@
     </section>
 
     <section class="card">
+      <div class="row between">
+        <strong class="small">📂 My Playlists</strong>
+        <button id="newPlaylistBtn" class="btn">+ New</button>
+      </div>
+      <ul id="playlistList" class="list"></ul>
+    </section>
+
+    <div id="addToPlaylistPanel" class="modal" hidden>
+      <div class="modal-inner">
+        <header class="row between">
+          <strong>Add to playlist</strong>
+          <button id="addPanelClose" class="icon-btn">✕</button>
+        </header>
+        <div id="addPanelTitle" class="muted small"></div>
+        <ul id="addPanelList" class="list"></ul>
+        <div class="row gap">
+          <input id="addPanelNewName" class="input" placeholder="New playlist name…" />
+          <button id="addPanelCreate" class="btn">Create &amp; add</button>
+        </div>
+      </div>
+    </div>
+
+    <section class="card">
       <div class="row gap">
         <button id="exportBtn" class="btn ghost">Export JSON</button>
         <button id="importBtn" class="btn ghost">Import JSON</button>

@@ -4,6 +4,7 @@
 (function () {
   const STORAGE_KEY = 'ct_courses';
   const SETTINGS_KEY = 'ct_settings';
+  const PLAYLISTS_KEY = 'ct_playlists';
 
   function isAlive() {
     try { return !!(chrome && chrome.runtime && chrome.runtime.id); }
@@ -98,11 +99,13 @@
 
   async function setLectureState(url, lectureId, state) {
     const course = await getCourse(url);
+    const prev = course.lectures[lectureId] || {};
     course.lectures[lectureId] = {
       done: !!state.done,
-      title: state.title || course.lectures[lectureId]?.title || '',
-      index: state.index ?? course.lectures[lectureId]?.index ?? 0,
-      duration: state.duration ?? course.lectures[lectureId]?.duration ?? null,
+      title: state.title || prev.title || '',
+      index: state.index ?? prev.index ?? 0,
+      duration: state.duration ?? prev.duration ?? null,
+      url: state.url || prev.url || null,
       updatedAt: Date.now()
     };
     return saveCourse(url, course);
@@ -117,10 +120,96 @@
         title: l.title || prev.title || '',
         index: l.index ?? prev.index ?? 0,
         duration: l.duration ?? prev.duration ?? null,
+        url: l.url || prev.url || null,
         updatedAt: prev.updatedAt || Date.now()
       };
     }
     return saveCourse(url, course);
+  }
+
+  // ----- Playlists -----
+
+  function makePlaylistId() {
+    return 'pl_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+  }
+
+  async function getPlaylists() {
+    const res = await safeGet([PLAYLISTS_KEY]);
+    return res[PLAYLISTS_KEY] || {};
+  }
+
+  async function savePlaylists(data) {
+    await safeSet({ [PLAYLISTS_KEY]: data });
+  }
+
+  async function getPlaylist(id) {
+    const all = await getPlaylists();
+    return all[id] || null;
+  }
+
+  async function createPlaylist(name) {
+    const all = await getPlaylists();
+    const id = makePlaylistId();
+    all[id] = {
+      id,
+      name: (name || 'Untitled playlist').trim().slice(0, 80),
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      items: []
+    };
+    await savePlaylists(all);
+    return all[id];
+  }
+
+  async function renamePlaylist(id, name) {
+    const all = await getPlaylists();
+    if (!all[id]) return null;
+    all[id].name = (name || all[id].name).trim().slice(0, 80);
+    all[id].updatedAt = Date.now();
+    await savePlaylists(all);
+    return all[id];
+  }
+
+  async function deletePlaylist(id) {
+    const all = await getPlaylists();
+    delete all[id];
+    await savePlaylists(all);
+  }
+
+  async function addItemToPlaylist(playlistId, item) {
+    const all = await getPlaylists();
+    if (!all[playlistId]) return null;
+    const exists = all[playlistId].items.some(
+      (it) => it.url === item.url && it.lectureId === item.lectureId
+    );
+    if (exists) return all[playlistId];
+    all[playlistId].items.push({
+      id: 'it_' + Math.random().toString(36).slice(2, 10),
+      url: item.url,
+      title: item.title,
+      duration: item.duration || null,
+      courseKey: item.courseKey,
+      lectureId: item.lectureId,
+      addedAt: Date.now()
+    });
+    all[playlistId].updatedAt = Date.now();
+    await savePlaylists(all);
+    return all[playlistId];
+  }
+
+  async function removeItemFromPlaylist(playlistId, itemId) {
+    const all = await getPlaylists();
+    if (!all[playlistId]) return null;
+    all[playlistId].items = all[playlistId].items.filter((it) => it.id !== itemId);
+    all[playlistId].updatedAt = Date.now();
+    await savePlaylists(all);
+    return all[playlistId];
+  }
+
+  async function isItemDone(item) {
+    const all = await getAll();
+    const course = all[item.courseKey];
+    return !!course?.lectures?.[item.lectureId]?.done;
   }
 
   async function getSettings() {
@@ -145,13 +234,15 @@
   async function exportAll() {
     const courses = await getAll();
     const settings = await getSettings();
-    return { exportedAt: new Date().toISOString(), settings, courses };
+    const playlists = await getPlaylists();
+    return { exportedAt: new Date().toISOString(), settings, courses, playlists };
   }
 
   async function importAll(payload) {
     if (!payload || typeof payload !== 'object') throw new Error('Invalid import payload');
     if (payload.courses) await setAll(payload.courses);
     if (payload.settings) await setSettings(payload.settings);
+    if (payload.playlists) await savePlaylists(payload.playlists);
   }
 
   window.CTStorage = {
@@ -165,6 +256,14 @@
     getSettings,
     setSettings,
     exportAll,
-    importAll
+    importAll,
+    getPlaylists,
+    getPlaylist,
+    createPlaylist,
+    renamePlaylist,
+    deletePlaylist,
+    addItemToPlaylist,
+    removeItemFromPlaylist,
+    isItemDone
   };
 })();

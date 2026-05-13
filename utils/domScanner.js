@@ -60,6 +60,19 @@
     return out;
   }
 
+  function nodeUrl(node) {
+    if (!node) return null;
+    if (node.tagName === 'A' && node.href) return node.href;
+    const a = node.querySelector && node.querySelector('a[href]');
+    if (a && a.href) return a.href;
+    let p = node.parentElement;
+    for (let i = 0; i < 3 && p; i++) {
+      if (p.tagName === 'A' && p.href) return p.href;
+      p = p.parentElement;
+    }
+    return null;
+  }
+
   function scanUdemy() {
     const items = [];
     const nodes = document.querySelectorAll(
@@ -216,7 +229,8 @@
     }
     items = uniqByTitle(items).map((it) => ({
       ...it,
-      id: makeLectureId(it.title, it.index)
+      id: makeLectureId(it.title, it.index),
+      url: it.url || nodeUrl(it.node) || location.href
     }));
     return { platform, items };
   }
