@@ -117,14 +117,64 @@
 
   function scan100xDevs() {
     const items = [];
-    const nodes = document.querySelectorAll(
-      '[class*="lecture"], [class*="Lecture"], [class*="video-item"], [class*="VideoItem"], li a[href*="lecture"], li a[href*="video"]'
-    );
-    nodes.forEach((node, i) => {
-      const title = node.textContent?.trim();
-      if (!title || title.length > 240) return;
-      items.push({ node, title: title.slice(0, 200), index: i, duration: null });
+    const seen = new Set();
+    const durRegex = /(?:\d+\s*hrs?\s+)?\d+\s*mins?(?:\s+\d+\s*secs?)?|\d+\s*secs?/i;
+
+    function tryPush(node, title, duration) {
+      if (!node || seen.has(node)) return;
+      if (!title || title.length < 2 || title.length > 240) return;
+      if (/^course website$/i.test(title.trim())) return;
+      seen.add(node);
+      items.push({
+        node,
+        title: title.replace(/\s+/g, ' ').trim().slice(0, 200),
+        index: items.length,
+        duration: duration ? duration.replace(/\s+/g, ' ').trim() : null
+      });
+    }
+
+    // Strategy A: anchor links pointing to a specific video
+    document.querySelectorAll('a[href*="/video/"]').forEach((node) => {
+      const text = (node.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!text || text.length > 280) return;
+      const m = text.match(durRegex);
+      const duration = m ? m[0] : null;
+      const title = duration ? text.replace(duration, '').trim() : text;
+      tryPush(node, title, duration);
     });
+
+    // Strategy B: walk up from each duration text node and pick the smallest
+    // ancestor whose remaining text (after removing the duration) is a real title.
+    let walker;
+    try {
+      walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+        acceptNode: (n) => {
+          const t = (n.nodeValue || '').trim();
+          return t && durRegex.test(t) && /\d/.test(t)
+            ? NodeFilter.FILTER_ACCEPT
+            : NodeFilter.FILTER_REJECT;
+        }
+      });
+    } catch (_) { walker = null; }
+
+    let tn;
+    while (walker && (tn = walker.nextNode())) {
+      const durText = (tn.nodeValue || '').trim();
+      if (!durText || durText.length > 60) continue;
+      let row = tn.parentElement;
+      for (let depth = 0; depth < 6 && row; depth++) {
+        if (seen.has(row)) break;
+        const allText = (row.textContent || '').replace(/\s+/g, ' ').trim();
+        if (allText.length > 320) break;
+        const title = allText.replace(durText, '').trim();
+        if (title.length >= 3) {
+          tryPush(row, title, durText);
+          break;
+        }
+        row = row.parentElement;
+      }
+    }
+
     return items;
   }
 
