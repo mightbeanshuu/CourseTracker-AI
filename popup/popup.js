@@ -403,6 +403,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     chrome.runtime.sendMessage({ type: 'CT_BROADCAST_UPDATE' });
   });
 
+  $('#homeBtn').addEventListener('click', () => {
+    const url = chrome.runtime.getURL('home/home.html');
+    chrome.tabs.create({ url });
+  });
+
   $('#rescanBtn').addEventListener('click', async () => {
     const tab = await getActiveTab();
     if (tab?.id) chrome.tabs.sendMessage(tab.id, { type: 'CT_REFRESH' }).catch(() => {});
