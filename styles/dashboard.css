@@ -1,0 +1,371 @@
+/* CourseTracker AI — shared design system
+ * Loaded by popup.html, playlist.html, and home.html so every page
+ * uses the same palette, typography, and component primitives. */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Institutional palette — inspired by BIT campus (cream walls, maroon trim) */
+  --bg:        #f4efe4;
+  --surface:   #ffffff;
+  --surface-2: #faf6ec;
+  --text:      #1a1a1a;
+  --muted:     #6b6663;
+  --border:    #e3dccd;
+  --border-strong: #cfc6b3;
+
+  --primary:   #7a1f2e;
+  --primary-2: #9a2a3c;
+  --primary-soft: rgba(122, 31, 46, 0.08);
+  --accent:    #b8893d;
+  --accent-soft: rgba(184, 137, 61, 0.12);
+
+  --danger:    #a83232;
+  --danger-soft: rgba(168, 50, 50, 0.08);
+  --success:   #2d6a4f;
+
+  --radius-sm: 6px;
+  --radius:    10px;
+  --radius-lg: 14px;
+
+  --shadow-1: 0 1px 2px rgba(40, 28, 22, 0.06), 0 1px 1px rgba(40, 28, 22, 0.04);
+  --shadow-2: 0 4px 14px rgba(40, 28, 22, 0.10);
+  --shadow-3: 0 16px 40px rgba(40, 28, 22, 0.18);
+
+  --font-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+:root[data-theme="dark"] {
+  --bg:        #15110f;
+  --surface:   #1f1815;
+  --surface-2: #261c19;
+  --text:      #f0e7d5;
+  --muted:     #a39687;
+  --border:    #3a2d27;
+  --border-strong: #503f37;
+
+  --primary:   #c14b5d;
+  --primary-2: #d96b7c;
+  --primary-soft: rgba(193, 75, 93, 0.14);
+  --accent:    #d9a85d;
+  --accent-soft: rgba(217, 168, 93, 0.16);
+
+  --danger:    #d96b6b;
+  --danger-soft: rgba(217, 107, 107, 0.14);
+  --success:   #5a9176;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 6px 18px rgba(0, 0, 0, 0.45);
+  --shadow-3: 0 20px 50px rgba(0, 0, 0, 0.55);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-base);
+  font-feature-settings: 'cv11', 'ss01';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- Layout primitives ---------- */
+
+.row { display: flex; align-items: center; }
+.row.between { justify-content: space-between; gap: 10px; }
+.row.gap { gap: 8px; }
+.col { display: flex; flex-direction: column; }
+
+.small { font-size: 12px; }
+.muted { color: var(--muted); }
+.mono  { font-variant-numeric: tabular-nums; }
+
+/* ---------- Brand ---------- */
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand .crest {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), var(--shadow-1);
+}
+
+.brand .brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.brand .brand-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--text);
+  margin: 0;
+}
+
+.brand .brand-sub {
+  font-size: 10.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: var(--muted);
+}
+
+/* Institutional accent strip — echoes the red trim on BIT */
+.accent-rule {
+  height: 3px;
+  background: var(--primary);
+  border-radius: 2px;
+  width: 100%;
+}
+
+/* ---------- Cards ---------- */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow-1);
+}
+
+.card.flat { box-shadow: none; }
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 12.5px;
+  letter-spacing: 0.2px;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.btn:hover { background: var(--primary-2); border-color: var(--primary-2); }
+.btn:active { transform: translateY(1px); }
+
+.btn.ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+}
+.btn.ghost:hover {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.btn.danger {
+  background: transparent;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}
+.btn.danger:hover { background: var(--danger-soft); }
+
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.icon-btn {
+  appearance: none;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.icon-btn:hover { background: var(--surface-2); border-color: var(--primary); color: var(--primary); }
+
+/* ---------- Inputs ---------- */
+
+.input {
+  flex: 1;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 12.5px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+textarea.input { resize: vertical; min-height: 44px; font-family: inherit; }
+select.input  { cursor: pointer; }
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.switch input { accent-color: var(--primary); }
+
+/* ---------- Pills / Badges ---------- */
+
+.pill {
+  font-size: 10.5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  border: 1px solid transparent;
+}
+
+.pill.solid {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.pill.outline {
+  background: transparent;
+  border-color: var(--border-strong);
+  color: var(--muted);
+}
+
+/* ---------- Progress ---------- */
+
+.track {
+  position: relative;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  width: 0%;
+  background: var(--primary);
+  border-radius: 4px;
+  transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.pct {
+  font-weight: 700;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.duration {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.duration[hidden] { display: none !important; }
+.duration strong { color: var(--text); font-weight: 600; }
+.duration .dur-sep { opacity: 0.45; }
+
+/* ---------- App header ---------- */
+
+.app-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.app-header .header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.header-actions { display: flex; gap: 6px; }
+
+/* ---------- Modal ---------- */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 14, 12, 0.55);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  animation: ctFadeIn 0.18s ease;
+}
+
+.modal[hidden] { display: none !important; }
+
+.modal-inner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 340px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow-3);
+  animation: ctScaleIn 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes ctFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ctScaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* ---------- Footer ---------- */
+
+.app-footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  padding-top: 4px;
+  letter-spacing: 0.3px;
+}
+
+/* ---------- Scrollbars (subtle) ---------- */
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+*::-webkit-scrollbar-track { background: transparent; }

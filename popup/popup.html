@@ -3,31 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <title>CourseTracker AI</title>
+  <link rel="stylesheet" href="../styles/dashboard.css" />
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
   <div class="wrap" id="wrap">
-    <header class="head">
-      <div class="brand">
-        <span class="dot"></span>
-        <h1>CourseTracker AI</h1>
+    <header class="app-header">
+      <div class="header-row">
+        <div class="brand">
+          <span class="crest">CT</span>
+          <div class="brand-text">
+            <h1 class="brand-title">CourseTracker</h1>
+            <span class="brand-sub">Learning Portal</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="homeBtn" class="icon-btn" title="Open dashboard">⌂</button>
+          <button id="themeBtn" class="icon-btn" title="Toggle theme">◐</button>
+        </div>
       </div>
-      <button id="themeBtn" class="icon-btn" title="Toggle theme">◐</button>
+      <div class="accent-rule"></div>
     </header>
 
-    <section class="card">
+    <section class="card current-course">
       <div class="row between">
         <div>
-          <div class="muted small">Current course</div>
+          <div class="section-title">Current course</div>
           <div id="courseUrl" class="title">—</div>
         </div>
-        <div class="pill" id="platformPill">—</div>
+        <div class="pill outline" id="platformPill">—</div>
       </div>
 
       <div class="progress-block">
         <div class="row between small">
           <span id="progressLabel" class="muted">Progress: 0 / 0</span>
-          <span id="progressPct" class="grad-text">0%</span>
+          <span id="progressPct" class="pct">0%</span>
         </div>
         <div class="track"><div id="progressFill" class="fill"></div></div>
         <div id="durationRow" class="duration" hidden>
@@ -61,15 +71,15 @@
 
     <section class="card">
       <div class="row between">
-        <strong class="small">Lectures</strong>
-        <span id="lectureCount" class="muted small">0</span>
+        <span class="section-title">Lectures</span>
+        <span id="lectureCount" class="muted small mono">0</span>
       </div>
       <ul id="lectureList" class="list"></ul>
     </section>
 
     <section class="card">
       <div class="row between">
-        <strong class="small">✨ AI Playlist Builder</strong>
+        <span class="section-title">AI Playlist Builder</span>
         <button id="aiSettingsBtn" class="icon-btn" title="API key settings">⚙</button>
       </div>
       <textarea id="aiPrompt" class="input" rows="2"
@@ -101,7 +111,7 @@
 
     <section class="card">
       <div class="row between">
-        <strong class="small">📂 My Playlists</strong>
+        <span class="section-title">My Playlists</span>
         <button id="newPlaylistBtn" class="btn">+ New</button>
       </div>
       <ul id="playlistList" class="list"></ul>
@@ -131,8 +141,8 @@
       <button id="resetBtn" class="btn danger">Reset this course</button>
     </section>
 
-    <footer class="foot muted small">
-      v1.0.0 · Track smarter, learn faster
+    <footer class="foot">
+      CourseTracker AI · v1.5.0
     </footer>
   </div>
 

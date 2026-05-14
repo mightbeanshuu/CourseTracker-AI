@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CourseTracker AI · Dashboard</title>
+  <link rel="icon" href="../assets/icon48.png" />
+  <link rel="stylesheet" href="../styles/dashboard.css" />
+  <link rel="stylesheet" href="home.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="page-head">
+      <div class="app-header">
+        <div class="header-row">
+          <div class="brand">
+            <span class="crest">CT</span>
+            <div class="brand-text">
+              <h1 class="brand-title">CourseTracker</h1>
+              <span class="brand-sub">Dashboard</span>
+            </div>
+          </div>
+          <div class="header-actions">
+            <button id="themeBtn" class="icon-btn" title="Toggle theme">◐</button>
+          </div>
+        </div>
+        <div class="accent-rule"></div>
+      </div>
+
+      <div class="hero">
+        <div>
+          <h2 class="hero-title">Welcome back</h2>
+          <p class="hero-sub muted small">Your learning overview, playlists, and active courses in one place.</p>
+        </div>
+        <button id="newPlaylistBtn" class="btn">+ New playlist</button>
+      </div>
+    </header>
+
+    <main class="grid">
+
+      <section class="card stats">
+        <div class="section-title">Overview</div>
+        <div class="stat-grid">
+          <div class="stat">
+            <div class="stat-value" id="statPlaylists">0</div>
+            <div class="stat-label">Playlists</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="statCourses">0</div>
+            <div class="stat-label">Courses tracked</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="statLectures">0</div>
+            <div class="stat-label">Lectures</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="statCompletion">0%</div>
+            <div class="stat-label">Overall completion</div>
+          </div>
+        </div>
+        <div class="overall-progress">
+          <div class="row between small">
+            <span id="overallLabel" class="muted">0 of 0 lectures complete</span>
+            <span id="overallPct" class="pct">0%</span>
+          </div>
+          <div class="track"><div id="overallFill" class="fill"></div></div>
+        </div>
+      </section>
+
+      <section class="card playlists">
+        <div class="row between">
+          <span class="section-title">My playlists</span>
+          <span id="playlistCount" class="muted small mono">0</span>
+        </div>
+        <ul id="playlistList" class="dash-list"></ul>
+        <div id="playlistEmpty" class="empty" hidden>
+          <div class="empty-icon">📂</div>
+          <h3>No playlists yet</h3>
+          <p>Open a course in your browser, click the toolbar icon, and add lectures to a playlist.</p>
+        </div>
+      </section>
+
+      <section class="card courses">
+        <div class="row between">
+          <span class="section-title">Recent courses</span>
+          <span id="courseCount" class="muted small mono">0</span>
+        </div>
+        <ul id="courseList" class="dash-list"></ul>
+        <div id="courseEmpty" class="empty" hidden>
+          <div class="empty-icon">🎓</div>
+          <h3>No courses tracked yet</h3>
+          <p>Visit any supported course site (Udemy, Coursera, YouTube, 100xDevs) and the extension will start tracking automatically.</p>
+        </div>
+      </section>
+
+      <section class="card actions">
+        <div class="section-title">Data</div>
+        <div class="row gap">
+          <button id="exportBtn" class="btn ghost">Export JSON</button>
+          <button id="importBtn" class="btn ghost">Import JSON</button>
+          <input id="importFile" type="file" accept="application/json" hidden />
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="app-footer">
+      CourseTracker AI · v1.5.0 · Track smarter, learn faster
+    </footer>
+  </div>
+
+  <script src="../utils/storage.js"></script>
+  <script src="../utils/progress.js"></script>
+  <script src="home.js"></script>
+</body>
+</html>

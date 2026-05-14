@@ -262,6 +262,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     await applyTheme();
   });
 
+  $('#homeBtn').addEventListener('click', () => {
+    location.href = chrome.runtime.getURL('home/home.html');
+  });
+
   // Rename playlist when name is edited
   $('#playlistName').addEventListener('blur', async () => {
     const newName = $('#playlistName').textContent.trim();
